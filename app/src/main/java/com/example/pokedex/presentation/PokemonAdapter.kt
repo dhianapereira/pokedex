@@ -3,6 +3,9 @@ package com.example.pokedex.presentation
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.example.pokedex.R
 import com.example.pokedex.databinding.PokemonItemBinding
 import com.example.pokedex.domain.Pokemon
 
@@ -13,6 +16,11 @@ class PokemonAdapter(private val items: List<Pokemon>) :
         fun bind(pokemon: Pokemon) {
             binding.name.text = pokemon.name
             binding.number.text = pokemon.formattedNumber()
+            Glide.with(binding.root.context)
+                .load(pokemon.getImage())
+                .error(R.drawable.image_not_supported)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(binding.image)
         }
     }
 
