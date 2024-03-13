@@ -9,8 +9,11 @@ import com.example.pokedex.R
 import com.example.pokedex.databinding.PokemonItemBinding
 import com.example.pokedex.domain.entities.Pokemon
 
-class PokemonAdapter(private val items: List<Pokemon>) :
+class PokemonAdapter(private val viewModel: PokemonListViewModel) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
+
+    private val list: List<Pokemon> = viewModel.state().value?.list ?: emptyList()
+
     class ViewHolder(private val binding: PokemonItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(pokemon: Pokemon) {
@@ -30,10 +33,9 @@ class PokemonAdapter(private val items: List<Pokemon>) :
         return ViewHolder(binding)
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = list.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.bind(item)
+        holder.bind(list[position])
     }
 }
