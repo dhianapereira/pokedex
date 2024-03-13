@@ -1,6 +1,6 @@
 package com.example.pokedex.data.mappers
 
-import com.example.pokedex.domain.PokemonType
+import com.example.pokedex.domain.entities.PokemonType
 
 data class PokemonApiResponse(val id: Int, val name: String, val types: List<PokemonTypeSlot>)
 

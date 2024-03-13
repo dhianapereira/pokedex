@@ -1,4 +1,4 @@
-package com.example.pokedex.data.interfaces
+package com.example.pokedex.domain.interfaces
 
 import com.example.pokedex.data.Endpoints
 import com.example.pokedex.data.mappers.PokemonApiResponse

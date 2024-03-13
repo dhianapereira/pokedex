@@ -1,6 +1,6 @@
 package com.example.pokedex.data
 
-import com.example.pokedex.data.interfaces.PokemonService
+import com.example.pokedex.domain.interfaces.PokemonService
 import com.example.pokedex.data.mappers.PokemonApiResponse
 import com.example.pokedex.data.mappers.PokemonListApiResponse
 import retrofit2.Retrofit

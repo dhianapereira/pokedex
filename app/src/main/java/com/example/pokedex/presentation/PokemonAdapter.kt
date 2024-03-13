@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pokedex.R
 import com.example.pokedex.databinding.PokemonItemBinding
-import com.example.pokedex.domain.Pokemon
+import com.example.pokedex.domain.entities.Pokemon
 
 class PokemonAdapter(private val items: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {

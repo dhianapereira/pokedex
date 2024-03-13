@@ -3,10 +3,8 @@ package com.example.pokedex.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pokedex.data.Endpoints
-import com.example.pokedex.data.PokemonRepository
 import com.example.pokedex.databinding.ActivityMainBinding
-import com.example.pokedex.domain.Pokemon
+import com.example.pokedex.domain.use_cases.GetAllPokemonsUseCase
 
 class MainActivity : ComponentActivity() {
     private val binding by lazy {
@@ -18,26 +16,7 @@ class MainActivity : ComponentActivity() {
         setContentView(binding.root)
 
         Thread {
-            val response = PokemonRepository.getAll()
-            val pokemons: List<Pokemon> = response?.let {
-                it.results.mapNotNull { result ->
-                    val number = result.url.replace(
-                        Endpoints.BASE_URL + Endpoints.POKEMON,
-                        ""
-                    ).replace("/", "").toInt()
-                    val pokemonApiResponse = PokemonRepository.getByNumber(number)
-                    pokemonApiResponse?.let { pokemon ->
-                        Pokemon(
-                            pokemon.id,
-                            pokemon.name,
-                            pokemon.types.map { pokemonTypeSlot ->
-                                pokemonTypeSlot.type
-                            }
-                        )
-                    }
-                }
-            } ?: emptyList()
-
+            val pokemons = GetAllPokemonsUseCase().call()
             val layoutManager = LinearLayoutManager(this)
             binding.pokemonRecycleView.post {
                 binding.pokemonRecycleView.layoutManager = layoutManager
