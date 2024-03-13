@@ -3,9 +3,10 @@ package com.example.pokedex.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pokedex.data.Endpoints
+import com.example.pokedex.data.PokemonRepository
 import com.example.pokedex.databinding.ActivityMainBinding
 import com.example.pokedex.domain.Pokemon
-import com.example.pokedex.domain.PokemonType
 
 class MainActivity : ComponentActivity() {
     private val binding by lazy {
@@ -16,14 +17,32 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val pokemon = Pokemon("", 1, "Bulbasaur", listOf(PokemonType("")))
-        val element = listOf<Pokemon>(
-            pokemon, pokemon, pokemon,
-            pokemon, pokemon, pokemon
-        )
+        Thread {
+            val response = PokemonRepository.getAll()
+            val pokemons: List<Pokemon> = response?.let {
+                it.results.mapNotNull { result ->
+                    val number = result.url.replace(
+                        Endpoints.BASE_URL + Endpoints.POKEMON,
+                        ""
+                    ).replace("/", "").toInt()
+                    val pokemonApiResponse = PokemonRepository.getByNumber(number)
+                    pokemonApiResponse?.let { pokemon ->
+                        Pokemon(
+                            pokemon.id,
+                            pokemon.name,
+                            pokemon.types.map { pokemonTypeSlot ->
+                                pokemonTypeSlot.type
+                            }
+                        )
+                    }
+                }
+            } ?: emptyList()
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.pokemonRecycleView.layoutManager = layoutManager
-        binding.pokemonRecycleView.adapter = PokemonAdapter(element)
+            val layoutManager = LinearLayoutManager(this)
+            binding.pokemonRecycleView.post {
+                binding.pokemonRecycleView.layoutManager = layoutManager
+                binding.pokemonRecycleView.adapter = PokemonAdapter(pokemons)
+            }
+        }.start()
     }
 }
