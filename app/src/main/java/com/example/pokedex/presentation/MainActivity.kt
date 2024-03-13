@@ -5,8 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex.databinding.ActivityMainBinding
 import com.example.pokedex.domain.use_cases.GetAllPokemonsUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
+    private val scope = CoroutineScope(Dispatchers.Main)
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -15,13 +21,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        Thread {
-            val pokemons = GetAllPokemonsUseCase().call()
-            val layoutManager = LinearLayoutManager(this)
-            binding.pokemonRecycleView.post {
-                binding.pokemonRecycleView.layoutManager = layoutManager
-                binding.pokemonRecycleView.adapter = PokemonAdapter(pokemons)
+        val layoutManager = LinearLayoutManager(this)
+
+        scope.launch {
+            val pokemons = withContext(Dispatchers.IO) {
+                GetAllPokemonsUseCase().call()
             }
-        }.start()
+
+            binding.pokemonRecycleView.layoutManager = layoutManager
+            binding.pokemonRecycleView.adapter = PokemonAdapter(pokemons)
+        }
     }
 }
