@@ -9,10 +9,8 @@ import com.example.pokedex.R
 import com.example.pokedex.databinding.PokemonItemBinding
 import com.example.pokedex.domain.entities.Pokemon
 
-class PokemonAdapter(private val viewModel: PokemonListViewModel) :
+class PokemonAdapter(private val list: List<Pokemon>) :
     RecyclerView.Adapter<PokemonAdapter.ViewHolder>() {
-
-    private val list: List<Pokemon> = viewModel.state().value?.list ?: emptyList()
 
     class ViewHolder(private val binding: PokemonItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

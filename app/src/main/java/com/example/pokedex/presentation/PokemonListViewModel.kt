@@ -12,20 +12,27 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PokemonListViewModel(private val getAllPokemons: GetAllPokemonsUseCase) : ViewModel() {
-    private val uiState: MutableLiveData<PokemonListUiState> by lazy {
-        MutableLiveData<PokemonListUiState>().also { liveData ->
-            viewModelScope.launch {
-                val pokemons = withContext(Dispatchers.IO) {
-                    getAllPokemons.call()
-                }
-                liveData.value = PokemonListUiState(list = pokemons)
+    private val _uiState: MutableLiveData<PokemonListUiState> = MutableLiveData()
+    fun state(): LiveData<PokemonListUiState> = _uiState
+
+    init {
+        fetchPokemons()
+    }
+
+    private fun fetchPokemons() {
+        viewModelScope.launch {
+            _uiState.value = PokemonListUiState.Loading
+            val pokemons = withContext(Dispatchers.IO) {
+                getAllPokemons.call()
             }
+            _uiState.value = PokemonListUiState.Success(pokemons)
         }
     }
 
-    fun state(): LiveData<PokemonListUiState> = uiState
-
-    data class PokemonListUiState(val list: List<Pokemon>)
+    sealed class PokemonListUiState {
+        data object Loading : PokemonListUiState()
+        data class Success(val list: List<Pokemon>) : PokemonListUiState()
+    }
 
     @Suppress("UNCHECKED_CAST")
     class Factory(private val getAllPokemons: GetAllPokemonsUseCase) : ViewModelProvider.Factory {
