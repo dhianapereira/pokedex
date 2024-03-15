@@ -26,22 +26,42 @@ class MainActivity : ComponentActivity() {
         viewModel.state().observe(this) { state ->
             when (state) {
                 is PokemonListViewModel.PokemonListUiState.Loading -> {
-                    binding.loading.visibility = View.VISIBLE
-                    binding.pokemonRecycleView.visibility = View.GONE
+                    showLoadingState()
                 }
 
                 is PokemonListViewModel.PokemonListUiState.Success -> {
-                    setRecycleView(state.list)
+                    showSuccessState(state.list)
+                }
+
+                is PokemonListViewModel.PokemonListUiState.Error -> {
+                    showErrorState()
                 }
             }
         }
     }
 
-    private fun setRecycleView(list: List<Pokemon>) {
+    private fun showLoadingState() {
+        binding.loading.visibility = View.VISIBLE
+        binding.errorContainer.visibility = View.GONE
+        binding.pokemonRecycleView.visibility = View.GONE
+    }
+
+    private fun showSuccessState(list: List<Pokemon>) {
         binding.loading.visibility = View.GONE
+        binding.errorContainer.visibility = View.GONE
         binding.pokemonRecycleView.visibility = View.VISIBLE
         val layoutManager = LinearLayoutManager(this)
         binding.pokemonRecycleView.layoutManager = layoutManager
         binding.pokemonRecycleView.adapter = PokemonAdapter(list)
+    }
+
+    private fun showErrorState() {
+        binding.loading.visibility = View.GONE
+        binding.errorContainer.visibility = View.VISIBLE
+        binding.pokemonRecycleView.visibility = View.GONE
+
+        binding.tryAgainButton.setOnClickListener {
+            viewModel.fetchPokemons()
+        }
     }
 }
