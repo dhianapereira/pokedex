@@ -6,7 +6,7 @@ import com.example.pokedex.domain.entities.Pokemon
 
 class GetAllPokemonsUseCase {
     fun call(limit: Int = 100): List<Pokemon> {
-        val response = PokemonRepository.getAll()
+        val response = PokemonRepository.getAll(limit)
         val pokemons: List<Pokemon> = response?.let {
             it.results.mapNotNull { result ->
                 val number = result.url.replace(
